@@ -26,18 +26,23 @@ void signal_handler(int signum) {
    exit(signum);
 }
 
-void receive_message(int *sd) {
+void receive_message() {
     int read;
     int toread;
     char *bp;
     char recbuf[BUFLEN];
+
+    struct sockaddr_in localAddress;
+    socklen_t addressLength = sizeof(localAddress);
+    getsockname(sd, (struct sockaddr*)&localAddress, &addressLength);
+    printf("local address: %s\n", inet_ntoa( localAddress.sin_addr));
 
     bp = recbuf;
     toread = BUFLEN;
 
     while (1) {
         read = 0;
-        while ((read = recv (*sd, bp, toread, 0)) < BUFLEN) {
+        while ((read = recv (sd, bp, toread, 0)) < BUFLEN) {
             bp += read;
             toread -= read;
         }
@@ -91,7 +96,7 @@ int main(int argc, char const *argv[]) {
             hp->h_name << " " <<
             inet_ntop(hp->h_addrtype, *pptr, ip, sizeof(ip)) << endl;
 
-    thread receive_thread(receive_message, &sd);
+    thread receive_thread(receive_message);
 
     while (1) {
         getline(cin, message);
