@@ -40,6 +40,11 @@ void receive_message() {
         while ((read = recv (sd, bp, toread, 0)) < BUFLEN) {
             bp += read;
             toread -= read;
+            if(read==0){
+                cout<<"Server ended... exiting client"<<endl;
+                exit(1);
+
+            }
         }
 
         cout << recbuf << endl;
