@@ -32,11 +32,6 @@ void receive_message() {
     char *bp;
     char recbuf[BUFLEN];
 
-    struct sockaddr_in localAddress;
-    socklen_t addressLength = sizeof(localAddress);
-    getsockname(sd, (struct sockaddr*)&localAddress, &addressLength);
-    printf("local address: %s\n", inet_ntoa( localAddress.sin_addr));
-
     bp = recbuf;
     toread = BUFLEN;
 
@@ -47,7 +42,7 @@ void receive_message() {
             toread -= read;
         }
 
-        cout << "Receive: " <<  recbuf << endl;
+        cout << recbuf << endl;
         fflush(stdout);
     }
 }
@@ -56,25 +51,35 @@ int main(int argc, char const *argv[]) {
 
     struct hostent *hp;
     struct sockaddr_in server;
+    struct sockaddr_in local_addr;
 
     string host;
+    string username;
     string message;
+    string address;
     char ip[16];
     char **pptr;
+
     signal(SIGINT, signal_handler);
 
-    if (argc < 2) {
-        cout << "Usage: " << argv[0] << " host" << endl;
-        exit(EXIT_FAILURE);
+    switch (argc) {
+        case 2:
+            host = argv[1];
+            break;
+        case 3:
+            host = argv[1];
+            username = argv[2];
+            break;
+        default:
+            cout << "Usage: " << argv[0] << " host" << endl;
+            exit(EXIT_FAILURE);
+            break;
     }
-
-    host = argv[1];
 
     if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         cerr << "Failed to create socket" << endl;
         exit(EXIT_FAILURE);
     }
-
 
     memset (&server, 0, sizeof(server));
     server.sin_family   = AF_INET;
@@ -98,8 +103,22 @@ int main(int argc, char const *argv[]) {
 
     thread receive_thread(receive_message);
 
+    socklen_t addr_len = sizeof(local_addr);
+    getsockname(sd, (struct sockaddr*)&local_addr, &addr_len);
+    address = inet_ntoa( local_addr.sin_addr);
+
     while (1) {
+
+        // TODO: fix user prompt (maybe ncurses?)
+        // cout << address << " (You): ";
+
         getline(cin, message);
+
+        if (username.empty()) {
+            message = address + ": " + message;
+        } else {
+            message = address + " (" + username + "): " + message;
+        }
 
         if (message.length() <= BUFLEN) {
             send (sd, message.c_str(), BUFLEN, 0);
