@@ -15,7 +15,7 @@
 using namespace std;
 
 #define SERVER_TCP_PORT 7000
-#define BUFLEN          255
+#define BUFLEN          511
 
 int sd;     // Global Socket Descriptor
 

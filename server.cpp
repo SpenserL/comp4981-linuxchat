@@ -11,7 +11,7 @@
 using namespace std;
 
 #define SERVER_TCP_PORT 7000
-#define BUFLEN          255
+#define BUFLEN          511
 #define LISTENQ         5
 
 int main(int argc, char const *argv[]) {
@@ -126,15 +126,24 @@ int main(int argc, char const *argv[]) {
                 toread = BUFLEN;
 
                 // read in the message
-                while ((read = recv (sock_fd, bp, toread, 0)) < BUFLEN) {
+                while ((read = recv(sock_fd, bp, toread, 0)) < BUFLEN) {
                     bp += read;
                     toread -= read;
+                    // connection closed by client
+                    if (read == 0) {
+                        cout << "Remote Address: " << inet_ntoa(client_addr.sin_addr) << " closed connection." << endl;
+                        close(sock_fd);
+                        FD_CLR(sock_fd, &allset);
+                        client[i] = -1;
+                        break;
+                    }
                 }
+
+                cout << recbuf << endl;
 
                 // echo recieve message to all clients (excluding sender)
                 for (int j = 0; j <= maxi; j++) {
                     if ((sock_fd = client[j]) < 0) {
-                        cerr << "Error reassigning sock_fd for echo" << endl;
                         continue;
                     }
 
@@ -142,7 +151,6 @@ int main(int argc, char const *argv[]) {
                         write(sock_fd, recbuf, BUFLEN);
                     }
                 }
-
             }
 
             if (--nready <= 0) {
