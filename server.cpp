@@ -1,20 +1,54 @@
-#include <iostream>
-#include <cstring>
-#include <stdio.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-using namespace std;
+#include "server.h"
 
-#define SERVER_TCP_PORT 7000
-#define BUFLEN          511
-#define LISTENQ         5
+/*---------------------------------------------------------------------------------------------------------------------
+-- SOURCE FILE: server.cpp
+--      The server program - This file contains the functionality for the chat server. A server listens for incoming
+--      client connections. It makes use of select() to process incoming messages from each client and echos that
+--      message to the other connected clients.
+--
+-- PROGRAM: server
+--
+-- FUNCTIONS:
+--      int main(int argc, char const *argv[])
+--
+-- DATE: MAR 23 2016
+--
+-- REVISIONS: MAR 23 2016 - Version 1
+--
+-- DESIGNER: Spenser Lee
+--
+-- PROGRAMMER: Thomas Yu
+--
+-- NOTES:
+-- This program accepts command arguments for the port on which to listen for new connections. The server makes
+-- use of select() to handle mutliple connected clients. When a client sends a message, the server receives the
+-- message and echos it to all othe connected clients.
+---------------------------------------------------------------------------------------------------------------------*/
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: main
+--
+-- DATE: MAR 23 2016
+--
+-- REVISIONS: MAR 23 2016 - Version 1
+--
+-- DESIGNER: Spenser Lee
+--
+-- PROGRAMMER: Thomas Yu
+--
+-- INTERFACE: int main(int argc, char const *argv[])
+--              argc:   number of commandl line arguments
+--              argv:   array of command line arguments
+--
+-- RETURNS: int: success
+--
+-- NOTES:
+-- The entry point and processing is all done in main - as this is a relatively simple program. The only optional
+-- command line argument is the port on which to listen for new connections - otherwise defaults to port 7000.
+-- The server will create a new listen socket and upon accepting a new connection will process each client on a
+-- separate socket. All of the sockets are maintained in a list, and updated via the messages processed via the
+-- select call.
+----------------------------------------------------------------------------------------------------------------------*/
 int main(int argc, char const *argv[]) {
 
     int i;
