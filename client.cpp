@@ -55,7 +55,7 @@ int main(int argc, char const *argv[]) {
     struct hostent *hp;
     struct sockaddr_in server;
     struct sockaddr_in local_addr;
-
+    string logtemp="-l";
     string host;
     string username;
     string message;
@@ -63,6 +63,7 @@ int main(int argc, char const *argv[]) {
     char ip[16];
     char **pptr;
     int port;
+    bool logactive=false;
 
     signal(SIGINT, signal_handler);
 
@@ -73,15 +74,32 @@ int main(int argc, char const *argv[]) {
             break;
         case 3:
             host = argv[1];
+            if(argv[2] == logtemp){
+                break;
+            }
             port = atoi(argv[2]);
             break;
         case 4:
             host = argv[1];
             port = atoi(argv[2]);
+            if(argv[3] == logtemp){
+                logactive=true;
+                cout<<"Log active"<<endl;
+                break;
+            }
             username = argv[3];
-            break;
+            break;  
+        case 5:
+            host = argv[1];
+            port = atoi(argv[2]);
+            username = argv[3];
+            if(argv[4] == logtemp){
+                logactive = true;
+                cout<<"Log active"<<endl;
+                break;            
+            }
         default:
-            cout << "Usage: " << argv[0] << " host port [username] " << endl;
+            cout << "Usage: " << argv[0] << " host port [username] [-l] " << endl;
             exit(EXIT_FAILURE);
             break;
     }
