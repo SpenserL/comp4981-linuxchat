@@ -42,6 +42,65 @@ void signal_handler(int signum) {
    exit(signum);
 }
 
+bool proccess_args(int *argc, char **argv, string *host, int *port, string *username, bool *logactive) {
+    string logswitch = "-l";
+
+    switch (*argc) {
+        case 2:
+            *host = argv[1];
+            *port=SERVER_TCP_PORT;
+            break;
+        case 3:
+            *host = argv[1];
+            if(argv[2] == logswitch){
+                break;
+            }
+            if(isdigit(*argv[2])){
+                *port = atoi(argv[2]);
+            } else{
+                cerr<<"invalid port number"<<endl;
+                return false;
+            }
+
+            break;
+        case 4:
+            *host = argv[1];
+            if(isdigit(*argv[2])){
+                *port = atoi(argv[2]);
+            } else{
+                cerr<<"invalid port number"<<endl;
+                return false;
+            }
+
+            if(argv[3] == logswitch){
+                *logactive=true;
+                cout<<"Log active"<<endl;
+                break;
+            }
+            *username = argv[3];
+            break;
+        case 5:
+            *host = argv[1];
+            if(isdigit(*argv[2])){
+                *port = atoi(argv[2]);
+            } else{
+                cerr<<"invalid port number"<<endl;
+                return false;
+            }
+
+            *username = argv[3];
+            if(argv[4] == logswitch){
+                *logactive = true;
+                cout<<"Log active"<<endl;
+                break;
+            }
+        default:
+            cout << "Usage: " << *argv[0] << " host port [username] [-l] " << endl;
+            return false;
+    }
+    return true;
+}
+
 void receive_message() {
     int read;
     int toread;
@@ -49,8 +108,6 @@ void receive_message() {
     char recbuf[BUFLEN];
     bp = recbuf;
     toread = BUFLEN;
-
-
 
     while (1) {
         read = 0;
@@ -69,7 +126,7 @@ void receive_message() {
     }
 }
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char *argv[]) {
 
     myfile.open ("log.txt",ios::trunc);
     myfile.close();
@@ -77,7 +134,6 @@ int main(int argc, char const *argv[]) {
     struct hostent *hp;
     struct sockaddr_in server;
     struct sockaddr_in local_addr;
-    string logtemp="-l";
     string host;
     string username;
     string message;
@@ -87,63 +143,11 @@ int main(int argc, char const *argv[]) {
     int port;
     bool logactive=false;
 
-    signal(SIGINT, signal_handler);
-
-
-    switch (argc) {
-        case 2:
-            host = argv[1];
-            port=SERVER_TCP_PORT;
-            break;
-        case 3:
-            host = argv[1];
-            if(argv[2] == logtemp){
-                break;
-            }
-            if(isdigit(*argv[2])){
-                port = atoi(argv[2]);
-            } else{
-                cerr<<"invalid port number"<<endl;
-                exit(EXIT_FAILURE);
-            }
-
-            break;
-        case 4:
-            host = argv[1];
-            if(isdigit(*argv[2])){
-                port = atoi(argv[2]);
-            } else{
-                cerr<<"invalid port number"<<endl;
-                exit(EXIT_FAILURE);
-            }
-
-            if(argv[3] == logtemp){
-                logactive=true;
-                cout<<"Log active"<<endl;
-                break;
-            }
-            username = argv[3];
-            break;
-        case 5:
-            host = argv[1];
-            if(isdigit(*argv[2])){
-                port = atoi(argv[2]);
-            } else{
-                cerr<<"invalid port number"<<endl;
-                exit(EXIT_FAILURE);
-            }
-
-            username = argv[3];
-            if(argv[4] == logtemp){
-                logactive = true;
-                cout<<"Log active"<<endl;
-                break;
-            }
-        default:
-            cout << "Usage: " << argv[0] << " host port [username] [-l] " << endl;
-            exit(EXIT_FAILURE);
-            break;
+    if (!proccess_args(&argc, argv, &host, &port, &username, &logactive)) {
+        exit(EXIT_FAILURE);
     }
+
+    signal(SIGINT, signal_handler);
 
     if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         cerr << "Failed to create socket" << endl;
