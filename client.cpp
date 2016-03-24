@@ -2,10 +2,12 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <ctime>
 #include <thread>
 #include <stdio.h>
 #include <netdb.h>
 #include <csignal>
+#include <sstream>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -18,6 +20,21 @@ using namespace std;
 #define BUFLEN          511
 
 int sd;     // Global Socket Descriptor
+
+
+string get_time() {
+
+    ostringstream s;
+    time_t cur_time;
+    struct tm *local_time;
+
+    time( &cur_time );                   // Get the current time
+    local_time = localtime( &cur_time );  // Convert the current time to the local time
+
+    s << local_time->tm_hour << ":" << local_time->tm_min << ":" << local_time->tm_sec;
+    return s.str();
+}
+
 
 void signal_handler(int signum) {
     cout << "\nInterrupt signal (" << signum << ") received.\n";
@@ -101,7 +118,7 @@ int main(int argc, char const *argv[]) {
                 break;
             }
             username = argv[3];
-            break;  
+            break;
         case 5:
             host = argv[1];
             if(isdigit(*argv[2])){
@@ -115,7 +132,7 @@ int main(int argc, char const *argv[]) {
             if(argv[4] == logtemp){
                 logactive = true;
                 cout<<"Log active"<<endl;
-                break;            
+                break;
             }
         default:
             cout << "Usage: " << argv[0] << " host port [username] [-l] " << endl;
@@ -162,9 +179,9 @@ int main(int argc, char const *argv[]) {
         getline(cin, message);
 
         if (username.empty()) {
-            message = address + ": " + message;
+            message = "[" + get_time() + "] " + address + ": " + message;
         } else {
-            message = address + " (" + username + "): " + message;
+            message = "[" + get_time() + "] " + address + " (" + username + "): " + message;
         }
 
         if (message.length() <= BUFLEN) {
