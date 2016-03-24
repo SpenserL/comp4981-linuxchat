@@ -120,9 +120,10 @@ int main(int argc, char *argv[]) {
         }
         if (message.length() <= BUFLEN) {
             send (sd, message.c_str(), BUFLEN, 0);
+        } else {
+            cout << "Error: message too long" << endl;
         }
     }
-
 }
 
 /*------------------------------------------------------------------------------------------------------------------
