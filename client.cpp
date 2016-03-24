@@ -115,11 +115,12 @@ int main(int argc, char *argv[]) {
         } else {
             message = "[" + get_time() + "] " + address + " (" + username + "): " + message;
         }
-        if(logactive){
-            myfile<<message.c_str()<<endl;
-        }
+
         if (message.length() <= BUFLEN) {
             send (sd, message.c_str(), BUFLEN, 0);
+            if(logactive){
+                myfile<<message.c_str()<<endl;
+            }
         } else {
             cout << "Error: message too long" << endl;
         }
