@@ -67,6 +67,7 @@ int main(int argc, char const *argv[]) {
 
     signal(SIGINT, signal_handler);
 
+
     switch (argc) {
         case 2:
             host = argv[1];
@@ -77,11 +78,23 @@ int main(int argc, char const *argv[]) {
             if(argv[2] == logtemp){
                 break;
             }
-            port = atoi(argv[2]);
+            if(isdigit(*argv[2])){
+                port = atoi(argv[2]);
+            } else{
+                cerr<<"invalid port number"<<endl;
+                exit(EXIT_FAILURE);
+            }
+
             break;
         case 4:
             host = argv[1];
-            port = atoi(argv[2]);
+            if(isdigit(*argv[2])){
+                port = atoi(argv[2]);
+            } else{
+                cerr<<"invalid port number"<<endl;
+                exit(EXIT_FAILURE);
+            }
+
             if(argv[3] == logtemp){
                 logactive=true;
                 cout<<"Log active"<<endl;
@@ -91,7 +104,13 @@ int main(int argc, char const *argv[]) {
             break;  
         case 5:
             host = argv[1];
-            port = atoi(argv[2]);
+            if(isdigit(*argv[2])){
+                port = atoi(argv[2]);
+            } else{
+                cerr<<"invalid port number"<<endl;
+                exit(EXIT_FAILURE);
+            }
+
             username = argv[3];
             if(argv[4] == logtemp){
                 logactive = true;
