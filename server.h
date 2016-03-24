@@ -3,12 +3,7 @@
 #include <iostream>
 #include <cstring>
 #include <stdio.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <stdlib.h>
-#include <strings.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 using namespace std;

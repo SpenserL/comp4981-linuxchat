@@ -106,9 +106,6 @@ int main(int argc, char *argv[]) {
 
     while (1) {
 
-        // TODO: fix user prompt (maybe ncurses?)
-        // cout << address << " (You): ";
-
         getline(cin, message);
 
         if (username.empty()) {
@@ -125,7 +122,26 @@ int main(int argc, char *argv[]) {
     }
 
 }
-// spenser
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: receive_message
+--
+-- DATE: MAR 23 2016
+--
+-- REVISIONS: MAR 23 2016 - Version 1
+--
+-- DESIGNER: Spenser Lee
+--
+-- PROGRAMMER: Spenser Lee
+--
+-- INTERFACE: void receive_message()
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Function for the receive thread; because the recv() call will block until it has received all of it's data,
+-- the receving on the client side was threaded. It will update the console with the received message.
+----------------------------------------------------------------------------------------------------------------------*/
 void receive_message() {
     int read;
     int toread;
@@ -151,7 +167,30 @@ void receive_message() {
     }
 }
 
-// thomas
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: process_args
+--
+-- DATE: MAR 23 2016
+--
+-- REVISIONS: MAR 23 2016 - Version 1
+--
+-- DESIGNER: Thomas Yu
+--
+-- PROGRAMMER: Thomas Yu
+--
+-- INTERFACE: bool proccess_args(int *argc, char **argv, string *host, int *port, string *username, bool *logactive)
+--              argc:       number of commandl line arguments
+--              argv:       array of command line arguments
+--              host:       host ip
+--              port:       server port
+--              username:   client username
+--              logactive:  whether or not to save chat session to log file
+--
+-- RETURNS: success
+--
+-- NOTES:
+-- Helper function to process command line arguments.
+----------------------------------------------------------------------------------------------------------------------*/
 bool proccess_args(int *argc, char **argv, string *host, int *port, string *username, bool *logactive) {
     string logswitch = "-l";
 
@@ -211,7 +250,24 @@ bool proccess_args(int *argc, char **argv, string *host, int *port, string *user
     return true;
 }
 
-// spenser
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: get_time
+--
+-- DATE: MAR 23 2016
+--
+-- REVISIONS: MAR 23 2016 - Version 1
+--
+-- DESIGNER: Spenser Lee
+--
+-- PROGRAMMER: Spenser Lee
+--
+-- INTERFACE: string get_time()
+--
+-- RETURNS: formatted time string
+--
+-- NOTES:
+-- Helper function to get the current time stamp.
+----------------------------------------------------------------------------------------------------------------------*/
 string get_time() {
 
     ostringstream s;
@@ -225,7 +281,26 @@ string get_time() {
     return s.str();
 }
 
-// spenser
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: signal_handler
+--
+-- DATE: MAR 23 2016
+--
+-- REVISIONS: MAR 23 2016 - Version 1
+--
+-- DESIGNER: Spenser Lee
+--
+-- PROGRAMMER: Spenser Lee
+--
+-- INTERFACE: void signal_handler(int signum)
+--              signum:  signal type
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Function to close the server socket descriptor before exiting.
+----------------------------------------------------------------------------------------------------------------------*/
 void signal_handler(int signum) {
     cout << "\nInterrupt signal (" << signum << ") received.\n";
     close(sd);

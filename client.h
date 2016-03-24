@@ -8,12 +8,12 @@
 #include <netdb.h>
 #include <csignal>
 #include <sstream>
+#include <fstream>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <fstream>
 using namespace std;
 
 #define SERVER_TCP_PORT 7000
