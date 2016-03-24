@@ -52,9 +52,6 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
 
-    myfile.open ("log.txt",ios::trunc);
-    myfile.close();
-    myfile.open ("log.txt",ios::app);
     struct hostent *hp;
     struct sockaddr_in server;
     struct sockaddr_in local_addr;
@@ -68,6 +65,12 @@ int main(int argc, char *argv[]) {
 
     if (!proccess_args(&argc, argv, &host, &port, &username, &logactive)) {
         exit(EXIT_FAILURE);
+    }
+
+    if (logactive) {
+        myfile.open ("log.txt",ios::trunc);
+        myfile.close();
+        myfile.open ("log.txt",ios::app);
     }
 
     signal(SIGINT, signal_handler);
