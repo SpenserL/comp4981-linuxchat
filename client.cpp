@@ -39,10 +39,9 @@ void receive_message() {
         while ((read = recv (sd, bp, toread, 0)) < BUFLEN) {
             bp += read;
             toread -= read;
-            if(read==0){
-                cout<<"Server ended... exiting client"<<endl;
-                exit(1);
-
+            if (read == 0) {
+                cout << "Server exited... exiting client" << endl;
+                exit(EXIT_FAILURE);
             }
         }
 
@@ -80,7 +79,7 @@ int main(int argc, char const *argv[]) {
             host = argv[1];
             port = atoi(argv[2]);
             username = argv[3];
-            break;            
+            break;
         default:
             cout << "Usage: " << argv[0] << " host port [username] " << endl;
             exit(EXIT_FAILURE);

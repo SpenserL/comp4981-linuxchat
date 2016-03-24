@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <stdio.h>
+#include <ctype.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -38,11 +39,15 @@ int main(int argc, char const *argv[]) {
 
     switch(argc){
         case 2:
-            port= atoi(argv[1]);
+            if (isdigit(*argv[1])) {
+                port= atoi(argv[1]);
+            } else {
+                cerr << "Invalid port number" << endl;
+                exit(EXIT_FAILURE);
+            }
             break;
         default:
             port=SERVER_TCP_PORT;
-
     }
 
 
