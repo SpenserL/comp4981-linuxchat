@@ -70,6 +70,7 @@ int main(int argc, char const *argv[]) {
 
     while (1) {
         int sender;
+        bool disconnect;
         rset = allset;
         nready = select(maxfd + 1, &rset, NULL, NULL, NULL);
 
@@ -114,6 +115,7 @@ int main(int argc, char const *argv[]) {
 
         // check all clients for new messages
         for (i = 0; i <= maxi; i++) {
+            disconnect = false;
             if ((sock_fd = client[i]) < 0) {
                 continue;
             }
@@ -135,20 +137,23 @@ int main(int argc, char const *argv[]) {
                         close(sock_fd);
                         FD_CLR(sock_fd, &allset);
                         client[i] = -1;
+                        disconnect = true;
                         break;
                     }
                 }
 
-                cout << recbuf << endl;
+                if (!disconnect) {
+                    cout << recbuf << endl;
 
-                // echo recieve message to all clients (excluding sender)
-                for (int j = 0; j <= maxi; j++) {
-                    if ((sock_fd = client[j]) < 0) {
-                        continue;
-                    }
+                    // echo recieve message to all clients (excluding sender)
+                    for (int j = 0; j <= maxi; j++) {
+                        if ((sock_fd = client[j]) < 0) {
+                            continue;
+                        }
 
-                    if (j != sender) {
-                        write(sock_fd, recbuf, BUFLEN);
+                        if (j != sender) {
+                            write(sock_fd, recbuf, BUFLEN);
+                        }
                     }
                 }
             }
