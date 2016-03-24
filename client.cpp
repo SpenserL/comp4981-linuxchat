@@ -65,7 +65,6 @@ int main(int argc, char *argv[]) {
     char ip[16];
     char **pptr;
     int port;
-    bool logactive=false;
 
     if (!proccess_args(&argc, argv, &host, &port, &username, &logactive)) {
         exit(EXIT_FAILURE);
@@ -139,11 +138,13 @@ void receive_message() {
         while ((read = recv (sd, bp, toread, 0)) < BUFLEN) {
             bp += read;
             toread -= read;
-            myfile << bp << endl;
             if (read == 0) {
                 cout << "Server exited... exiting client" << endl;
                 exit(EXIT_FAILURE);
             }
+        }
+        if(logactive){
+            myfile << bp << endl;
         }
 
         cout << recbuf << endl;
