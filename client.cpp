@@ -31,7 +31,6 @@ void receive_message() {
     int toread;
     char *bp;
     char recbuf[BUFLEN];
-
     bp = recbuf;
     toread = BUFLEN;
 
@@ -64,19 +63,26 @@ int main(int argc, char const *argv[]) {
     string address;
     char ip[16];
     char **pptr;
+    int port;
 
     signal(SIGINT, signal_handler);
 
     switch (argc) {
         case 2:
             host = argv[1];
+            port=SERVER_TCP_PORT;
             break;
         case 3:
             host = argv[1];
-            username = argv[2];
+            port = atoi(argv[2]);
             break;
+        case 4:
+            host = argv[1];
+            port = atoi(argv[2]);
+            username = argv[3];
+            break;            
         default:
-            cout << "Usage: " << argv[0] << " host" << endl;
+            cout << "Usage: " << argv[0] << " host port [username] " << endl;
             exit(EXIT_FAILURE);
             break;
     }
@@ -88,7 +94,7 @@ int main(int argc, char const *argv[]) {
 
     memset (&server, 0, sizeof(server));
     server.sin_family   = AF_INET;
-    server.sin_port     = htons(SERVER_TCP_PORT);
+    server.sin_port     = htons(port);
 
     if ((hp = gethostbyname(host.c_str())) == NULL) {
         cerr << "Unknown server address" << endl;

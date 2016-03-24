@@ -16,12 +16,13 @@ using namespace std;
 
 int main(int argc, char const *argv[]) {
 
+
     int i;
     int read;
     int toread;
     char *bp;
     char recbuf[BUFLEN];
-
+    int port;
     int listen_sd;
     int accept_sd;
     int sock_fd;
@@ -34,6 +35,16 @@ int main(int argc, char const *argv[]) {
     socklen_t client_len;
     fd_set rset;
     fd_set allset;
+
+    switch(argc){
+        case 2:
+            port= atoi(argv[1]);
+            break;
+        default:
+            port=SERVER_TCP_PORT;
+
+    }
+
 
     if ((listen_sd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         cerr << "Error creating listen socket" << endl;
@@ -49,7 +60,7 @@ int main(int argc, char const *argv[]) {
 
     memset (&server, 0, sizeof(server));
     server.sin_family = AF_INET;
-    server.sin_port = htons(SERVER_TCP_PORT);
+    server.sin_port = htons(port);
     server.sin_addr.s_addr = htonl(INADDR_ANY);
 
     if (bind(listen_sd, (struct sockaddr *) &server, sizeof(server)) == -1) {
