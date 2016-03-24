@@ -28,3 +28,4 @@ void signal_handler(int signum);
 bool proccess_args(int *argc, char **argv, string *host, int *port, string *username, bool *logactive);
 void receive_message();
 int main(int argc, char *argv[]);
+bool logactive=false;
