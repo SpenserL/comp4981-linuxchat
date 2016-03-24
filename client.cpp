@@ -13,14 +13,14 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-
+#include <fstream>
 using namespace std;
 
 #define SERVER_TCP_PORT 7000
 #define BUFLEN          511
 
 int sd;     // Global Socket Descriptor
-
+ofstream myfile;
 
 string get_time() {
 
@@ -34,7 +34,6 @@ string get_time() {
     s << local_time->tm_hour << ":" << local_time->tm_min << ":" << local_time->tm_sec;
     return s.str();
 }
-
 
 void signal_handler(int signum) {
     cout << "\nInterrupt signal (" << signum << ") received.\n";
@@ -51,11 +50,14 @@ void receive_message() {
     bp = recbuf;
     toread = BUFLEN;
 
+
+
     while (1) {
         read = 0;
         while ((read = recv (sd, bp, toread, 0)) < BUFLEN) {
             bp += read;
             toread -= read;
+            myfile<<bp<<endl;
             if (read == 0) {
                 cout << "Server exited... exiting client" << endl;
                 exit(EXIT_FAILURE);
@@ -69,6 +71,9 @@ void receive_message() {
 
 int main(int argc, char const *argv[]) {
 
+    myfile.open ("log.txt",ios::trunc);
+    myfile.close();
+    myfile.open ("log.txt",ios::app);
     struct hostent *hp;
     struct sockaddr_in server;
     struct sockaddr_in local_addr;
@@ -183,7 +188,9 @@ int main(int argc, char const *argv[]) {
         } else {
             message = "[" + get_time() + "] " + address + " (" + username + "): " + message;
         }
-
+        if(logactive){
+            myfile<<message.c_str()<<endl;
+        }
         if (message.length() <= BUFLEN) {
             send (sd, message.c_str(), BUFLEN, 0);
         }
